@@ -6,8 +6,11 @@ import reportlab
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase.ttfonts import TTFont as pdfFont
 from reportlab.pdfbase import pdfmetrics
-from datetime import datetime
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import Paragraph
 
+from datetime import datetime
 from pdfrw import PdfReader, PdfWriter, PageMerge
 from cn2an import transform
 from fontTools.ttLib import TTFont
@@ -20,68 +23,93 @@ from PyQt5.QtCore import *
 class Ui_widget(object):
     def setupUi(self, widget):
         widget.setObjectName("widget")
-        widget.resize(446, 326)
+        widget.resize(420, 380)
         self.gridLayout = QtWidgets.QGridLayout(widget)
-        self.gridLayout.setContentsMargins(20, 20, 20, 20)
         self.gridLayout.setObjectName("gridLayout")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
         self.label_3 = QtWidgets.QLabel(widget)
         self.label_3.setObjectName("label_3")
-        self.horizontalLayout_2.addWidget(self.label_3)
+        self.horizontalLayout.addWidget(self.label_3)
         self.file_path_line = QtWidgets.QLineEdit(widget)
         self.file_path_line.setText("")
         self.file_path_line.setReadOnly(True)
         self.file_path_line.setObjectName("file_path_line")
-        self.horizontalLayout_2.addWidget(self.file_path_line)
+        self.horizontalLayout.addWidget(self.file_path_line)
         self.file_path_btn = QtWidgets.QPushButton(widget)
         self.file_path_btn.setFocusPolicy(QtCore.Qt.NoFocus)
         self.file_path_btn.setObjectName("file_path_btn")
-        self.horizontalLayout_2.addWidget(self.file_path_btn)
-        self.gridLayout.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.horizontalLayout.addWidget(self.file_path_btn)
+        self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label_8 = QtWidgets.QLabel(widget)
+        self.label_8.setObjectName("label_8")
+        self.horizontalLayout_2.addWidget(self.label_8)
         self.font_box = QtWidgets.QComboBox(widget)
+        self.font_box.setMinimumSize(QtCore.QSize(100, 0))
         self.font_box.setEditable(True)
         self.font_box.setObjectName("font_box")
-        self.horizontalLayout.addWidget(self.font_box)
+        self.horizontalLayout_2.addWidget(self.font_box)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
+        self.label = QtWidgets.QLabel(widget)
+        self.label.setObjectName("label")
+        self.horizontalLayout_2.addWidget(self.label)
+        self.alignment_box = QtWidgets.QComboBox(widget)
+        self.alignment_box.setMinimumSize(QtCore.QSize(90, 0))
+        self.alignment_box.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.alignment_box.setEditable(True)
+        self.alignment_box.setObjectName("alignment_box")
+        self.horizontalLayout_2.addWidget(self.alignment_box)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.label_6 = QtWidgets.QLabel(widget)
+        self.label_6.setMinimumSize(QtCore.QSize(40, 0))
+        self.label_6.setMaximumSize(QtCore.QSize(10, 16777215))
+        self.label_6.setObjectName("label_6")
+        self.horizontalLayout_3.addWidget(self.label_6)
         self.font_size_box = QtWidgets.QComboBox(widget)
-        self.font_size_box.setMaximumSize(QtCore.QSize(70, 16777215))
+        self.font_size_box.setMaximumSize(QtCore.QSize(60, 16777215))
         self.font_size_box.setEditable(True)
         self.font_size_box.setObjectName("font_size_box")
-        self.horizontalLayout.addWidget(self.font_size_box)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem)
+        self.horizontalLayout_3.addWidget(self.font_size_box)
+        self.label_7 = QtWidgets.QLabel(widget)
+        self.label_7.setMinimumSize(QtCore.QSize(40, 0))
+        self.label_7.setMaximumSize(QtCore.QSize(10, 16777215))
+        self.label_7.setObjectName("label_7")
+        self.horizontalLayout_3.addWidget(self.label_7)
+        self.leading_box = QtWidgets.QComboBox(widget)
+        self.leading_box.setMaximumSize(QtCore.QSize(60, 16777215))
+        self.leading_box.setEditable(True)
+        self.leading_box.setObjectName("leading_box")
+        self.horizontalLayout_3.addWidget(self.leading_box)
         self.label_1 = QtWidgets.QLabel(widget)
         self.label_1.setMaximumSize(QtCore.QSize(10, 16777215))
         self.label_1.setObjectName("label_1")
-        self.horizontalLayout.addWidget(self.label_1)
+        self.horizontalLayout_3.addWidget(self.label_1)
         self.x_box = QtWidgets.QComboBox(widget)
-        self.x_box.setMaximumSize(QtCore.QSize(70, 16777215))
+        self.x_box.setMaximumSize(QtCore.QSize(60, 16777215))
         self.x_box.setEditable(True)
         self.x_box.setObjectName("x_box")
-        self.horizontalLayout.addWidget(self.x_box)
+        self.horizontalLayout_3.addWidget(self.x_box)
         self.label_2 = QtWidgets.QLabel(widget)
         self.label_2.setMaximumSize(QtCore.QSize(10, 16777215))
         self.label_2.setObjectName("label_2")
-        self.horizontalLayout.addWidget(self.label_2)
+        self.horizontalLayout_3.addWidget(self.label_2)
         self.y_box = QtWidgets.QComboBox(widget)
-        self.y_box.setMaximumSize(QtCore.QSize(70, 16777215))
+        self.y_box.setMaximumSize(QtCore.QSize(60, 16777215))
         self.y_box.setEditable(True)
         self.y_box.setObjectName("y_box")
-        self.horizontalLayout.addWidget(self.y_box)
-        self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
+        self.horizontalLayout_3.addWidget(self.y_box)
+        self.gridLayout.addLayout(self.horizontalLayout_3, 2, 0, 1, 1)
         self.input_string_view = QtWidgets.QTextEdit(widget)
         self.input_string_view.setObjectName("input_string_view")
-        self.gridLayout.addWidget(self.input_string_view, 2, 0, 1, 1)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem1)
+        self.gridLayout.addWidget(self.input_string_view, 3, 0, 1, 1)
         self.run_btn = QtWidgets.QPushButton(widget)
         self.run_btn.setObjectName("run_btn")
-        self.horizontalLayout_3.addWidget(self.run_btn)
-        self.gridLayout.addLayout(self.horizontalLayout_3, 3, 0, 1, 1)
+        self.gridLayout.addWidget(self.run_btn, 4, 0, 1, 1)
 
         self.retranslateUi(widget)
         QtCore.QMetaObject.connectSlotsByName(widget)
@@ -89,12 +117,15 @@ class Ui_widget(object):
     def retranslateUi(self, widget):
         _translate = QtCore.QCoreApplication.translate
         widget.setWindowTitle(_translate("widget", "pdf文字添加"))
-        self.label_3.setText(_translate("widget", "源pdf："))
+        self.label_3.setText(_translate("widget", "输入："))
         self.file_path_btn.setText(_translate("widget", "..."))
+        self.label_8.setText(_translate("widget", "字体："))
+        self.label.setText(_translate("widget", "对齐方式："))
+        self.label_6.setText(_translate("widget", "字号:"))
+        self.label_7.setText(_translate("widget", "行距:"))
         self.label_1.setText(_translate("widget", "x:"))
         self.label_2.setText(_translate("widget", "y:"))
         self.run_btn.setText(_translate("widget", "输出.."))
-
 
 class ui_main(QDialog, Ui_widget):
 	def __init__(self, parent = None):
@@ -106,25 +137,36 @@ class ui_main(QDialog, Ui_widget):
 
 		self.font_book = []
 		self.font_book_path = {}
-		self.create_font_book(f"{os.environ['HOME']}/Library/Fonts")
+		if sys.platform == 'darwin':
+			self.create_font_book(f"{os.environ['HOME']}/Library/Fonts")
+			self.create_font_book("/System/Library/Fonts")
+		elif sys.platform == 'win32':
+			self.create_font_book("C:\\Windows\\Fonts")
+		self.font_book.sort()
 		self.font_box.addItems(self.font_book)
 		
 		self.font_size_box.addItems([str((x + 1) * 4) for x in range(18)])
 		self.x_box.addItems([str(x * 5) for x in range(21)])
 		self.y_box.addItems([str(x * 5) for x in range(21)])
+		self.alignment_box.addItems(['左对齐', '居中', '右对齐'])
+		self.leading_box.addItems([str(x * 2) for x in range(4, 15)])
 		
 		self.font_size_box.setCurrentIndex(3)
 		self.x_box.setCurrentIndex(10)
 		self.y_box.setCurrentIndex(2)
+		self.leading_box.setCurrentIndex(4)
 
 		self.font_size_box.currentTextChanged.connect(self.font_size_change)
 		self.x_box.currentTextChanged.connect(self.x_change)
 		self.y_box.currentTextChanged.connect(self.y_change)
 
-		s = '在此输入需要添加的文字，将在每一页的(x, y)位置上添加，(0, 0)为左下角，(50, 50)为中心；\n\n'\
-		'使用/A来替代逐页递增的自然数，'\
-		'在/A后紧跟着的<>中使用/B、/C和数字分别表示按书签递增、中文数字和起始数字；\n\n'\
-		'示例：“第/A</C10>页”，将在首页添加“第十页”，次页添加“第十一页”，以此类推。'
+		s = '在每页以(x, y)为文字框左上角座标添加文字，(0, 0)为页面左下角，(100, 100)为页面右上角；\n\n'\
+		'使用/A替代逐页递增的自然数，'\
+		'在/A后紧跟着的<>中使用/B、/C和数字分别表示按书签递增、中文数字和起始数字（优先级高），'\
+		'例如“第/A</C10>页”表示从“第十页”开始；\n\n'\
+		'可使用<br/>换行，<strike>删除线</strike>，<u>下划线</u><font color=red size=20>'\
+		'文字颜色、大小</font>等XML标记，少部分英文字体可用'\
+		'<b>加粗</b>，<i>斜体</i>。'
 		self.input_string_view.setPlaceholderText(s)
 
 	def x_change(self):
@@ -185,6 +227,8 @@ class ui_main(QDialog, Ui_widget):
 		self.font = self.font_box.currentText()
 		self.fontsize = int(self.font_size_box.currentText())
 		self.input_string = self.input_string_view.toPlainText()
+		self.alignment = {'左对齐': 0, '居中': 1,'右对齐' :2}[self.alignment_box.currentText()]
+		self.leading = int(self.leading_box.currentText())
 
 		self.get_outline()
 		self.create_tmp()
@@ -231,7 +275,10 @@ class ui_main(QDialog, Ui_widget):
 						k = strip_it(k, '/B')
 						k = strip_it(k, '/C')
 						t[1] = int(k) if k.isdigit() else 1
-						s = s[j + 1:]
+						if k == '' or k.isdigit():
+							s = s[j + 1:]
+						else:
+							s = f'<{k}>{s[j + 1:]}'
 				l.append(t)
 				i = 0
 			else:
@@ -256,18 +303,29 @@ class ui_main(QDialog, Ui_widget):
 			yield str(g)
 
 	def create_tmp(self):
-		t = canvas.Canvas(self.tmp_path)
-		g = self.generator(self.input_string)
-		i_pdf = PdfReader(self.input_path)
 		try:
 			pdfmetrics.registerFont(pdfFont(self.font, self.font_book_path[self.font]))
 		except:
 			self.font = 'Times-Roman'
+		ParagraphStyle.defaults['wordWrap'] = 'CJK'
+		styleSheet = getSampleStyleSheet()
+		style = styleSheet['BodyText']
+		style.fontName = self.font
+		style.fontSize = self.fontsize
+		style.alignment = self.alignment
+		style.leading = self.leading
+
+		t = canvas.Canvas(self.tmp_path)
+		g = self.generator(self.input_string)
+		i_pdf = PdfReader(self.input_path)
+
 		for page in i_pdf.pages:
 			w, h = page.MediaBox[2], page.MediaBox[3]
 			t.setPageSize((w, h))
-			t.setFont(self.font, self.fontsize)
-			t.drawCentredString(float(w) * self.x / 100, float(h) * self.y / 100, next(g))
+			
+			pa = Paragraph(next(g), style)
+			pa.wrapOn(t, pa.minWidth(), float(h))
+			pa.drawOn(t, float(w) * self.x / 100, float(h) * self.y / 100)
 			t.showPage()
 		t.save()
 
