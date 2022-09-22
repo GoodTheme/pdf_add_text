@@ -149,24 +149,24 @@ class ui_main(QDialog, Ui_widget):
 		self.x_box.addItems([str(x * 5) for x in range(21)])
 		self.y_box.addItems([str(x * 5) for x in range(21)])
 		self.alignment_box.addItems(['左对齐', '居中', '右对齐'])
-		self.leading_box.addItems([str(x * 2) for x in range(4, 15)])
+		self.leading_box.addItems([str(x * 4) for x in range(2, 15)])
 		
 		self.font_size_box.setCurrentIndex(3)
 		self.x_box.setCurrentIndex(10)
 		self.y_box.setCurrentIndex(2)
-		self.leading_box.setCurrentIndex(4)
+		self.leading_box.setCurrentIndex(3)
 
 		self.font_size_box.currentTextChanged.connect(self.font_size_change)
 		self.x_box.currentTextChanged.connect(self.x_change)
 		self.y_box.currentTextChanged.connect(self.y_change)
 
-		s = '在每页以(x, y)为文字框左上角坐标添加文字，(0, 0)为页面左下角，(100, 100)为页面右上角；\n\n'\
-		'使用/A替代逐页递增的自然数，'\
-		'在/A后紧跟着的<>中使用/B、/C和数字分别表示按书签递增、中文数字和起始数字（优先级高），'\
-		'例如“第/A</C10>页”表示从“第十页”开始；\n\n'\
-		'可使用<br/>换行，<strike>删除线</strike>，<u>下划线</u>，<font color=red size=20>'\
-		'文字颜色、大小</font>等XML标记，少部分英文字体可用'\
-		'<b>加粗</b>，<i>斜体</i>。'
+		s = "在每页以(x, y)为文字框左上角坐标添加文字，(0, 0)为页面左下角，(100, 100)为页面右上角；\n\n"\
+		"使用/A替代逐页递增的自然数，"\
+		"在/A后紧跟着的<>中使用/B、/C和数字分别表示按书签递增、中文数字和起始数字（优先级高），"\
+		"例如“第/A</C10>页”表示从“第十页”开始；\n\n"\
+		"可使用<br/>换行，<strike>删除线</strike>，<u>下划线</u>，<font color=red size=20 fontname = '字体名''>"\
+		"文字颜色、大小、改变字体</font>等XML标记，少部分英文字体可用"\
+		"<b>加粗</b>，<i>斜体</i>。"
 		self.input_string_view.setPlaceholderText(s)
 
 	def x_change(self):
@@ -192,22 +192,22 @@ class ui_main(QDialog, Ui_widget):
 		file_path = QFileDialog.getOpenFileName(self, 'open', '.', '*.pdf')[0]
 		self.file_path_line.setText(file_path)
 
-
 	def create_font_book(self, font_path):
-		files = os.listdir(font_path)
-		for file in files:
-			if file[-4:].lower() == '.ttf':
-				path = os.path.join(font_path,file)
-				ttfont = TTFont(path)
-				font = ttfont['name'].names[4].string
-				try:
-					font = font.decode('utf-8')
-				except:
-					continue
-				else:
-					if isinstance(font, str) and font not in self.font_book:
-						self.font_book.append(font)
-						self.font_book_path.update({font: path})
+		for pathname, dirname, files in os.walk(font_path):
+			for file in files:
+				if file[-4:].lower() == '.ttf':
+					path = os.path.join(pathname,file)
+					ttfont = TTFont(path)
+					font = ttfont['name'].names[4].string
+					try:
+						font = font.decode('utf-8')
+					except:
+						continue
+					else:
+						font = ''.join(x for x in font if x.isprintable())
+						if font not in self.font_book:
+							self.font_book.append(font)
+							self.font_book_path.update({font.lower(): path})
 
 	def run(self):
 		self.input_path = self.file_path_line.text()
@@ -286,6 +286,16 @@ class ui_main(QDialog, Ui_widget):
 		if s:
 			l.append([0, s])
 
+		s = input_string
+		while 'fontname' in s.lower():
+			i = s.find('\'', s.lower().find('fontname') + 1)
+			j = s.find('\'', i + 1)
+			try:
+				pdfmetrics.registerFont(pdfFont(s[i + 1: j], self.font_book_path[s[i + 1: j].lower()]))
+			except:
+				pass
+			s = s[j:]
+
 		while True:
 			g = ''
 			for i, t in enumerate(l):
@@ -304,7 +314,7 @@ class ui_main(QDialog, Ui_widget):
 
 	def create_tmp(self):
 		try:
-			pdfmetrics.registerFont(pdfFont(self.font, self.font_book_path[self.font]))
+			pdfmetrics.registerFont(pdfFont(self.font, self.font_book_path[self.font.lower()]))
 		except:
 			self.font = 'Times-Roman'
 		ParagraphStyle.defaults['wordWrap'] = 'CJK'
